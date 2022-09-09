@@ -20,9 +20,6 @@ const seven = document.getElementById("seven");
 const eight = document.getElementById("eight");
 const nine = document.getElementById("nine");
 
-// Variable to hold calculated number so far
-let calculated = 0;
-
 // Add clicked button value to display
 const addToDisplay = (num) => {
     return function () {
@@ -32,16 +29,12 @@ const addToDisplay = (num) => {
             let oldValue = displayValue.textContent;
             displayValue.textContent = `${oldValue}${num}`;
         }
-        // if (displayValue.textContent.length > 3) {
-        //     // place commas in number
-        // }
     }
 }
 
 // Clear function
 const clearDisplay = () => {
     displayValue.textContent = 0;
-    calculated = 0;
 }
 
 // Change number from positive to negative or vice versa
@@ -59,45 +52,30 @@ const convertToPercent = () => {
     displayValue.textContent = percent;
 }
 
-// Addition function
-const addNums = () => {
-    calculated += num;
-}
-
-// Subtraction function
-const subtractNums = () => {
-
-}
-
-// Multiplication function
-const multiplyNums = () => {
-
-}
-
-// Division function
-const divideNums = () => {
-
-}
-
-// Equals function
+// Equals function  // Equation is a string
 const mathEquals = () => {
-    // Check if the displayed equation includes a multiplication symbol...
-    if (displayValue.textContent.includes("\327")) {
-
+    let equation = displayValue.textContent;
+    
+    for (let i = 0; i < equation.length; i++) {
+        let num1 = Number(equation.slice(0, i))
+        let num2 = Number(equation.slice(i + 1));
+        switch (equation[i]) {
+            case "\53":
+                displayValue.textContent = num1 + num2;
+                break;
+            case "\55":
+                displayValue.textContent = num1 - num2;
+                break;
+            case "\327":
+                displayValue.textContent = num1 * num2;
+                break;
+            case "\367":
+                displayValue.textContent = num1 / num2;
+                break;
+            default:
+                break;
+        }
     }
-    // ...a division symbol...
-    if (displayValue.textContent.includes("\367")) {
-
-    }
-    // ...an addition symbol...
-    if (displayValue.textContent.includes("\53")) {
-        
-    }
-    // ...or a subtraction symbol
-    if (displayValue.textContent.includes("\55")) {
-
-    }
-    displayValue.textContent = calculated;
 }
 
 // Click events for numbers

@@ -23,7 +23,7 @@ const nine = document.getElementById("nine");
 // Add clicked button value to display
 const addToDisplay = (num) => {
     return function () {
-        if (displayValue.textContent == 0) {
+        if (displayValue.textContent == 0 && num !== ".") {
             displayValue.textContent = num;
         } else {
             let oldValue = displayValue.textContent;

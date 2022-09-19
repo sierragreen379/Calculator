@@ -1,5 +1,6 @@
 // Retrieve elements from the DOM and assign them to variables
 const displayValue = document.getElementById("display_value");
+const previousEquation = document.getElementById("previous_equation");
 const clear = document.getElementById("clear");
 const pos_neg = document.getElementById("pos_neg");
 const percent = document.getElementById("percent");
@@ -20,7 +21,9 @@ const seven = document.getElementById("seven");
 const eight = document.getElementById("eight");
 const nine = document.getElementById("nine");
 
-// Add clicked button value to display
+let equationTracker = "";
+
+// Add clicked button value to display and to equationTracker variable
 const addToDisplay = (num) => {
     return function () {
         if (displayValue.textContent == 0 && num !== ".") {
@@ -29,12 +32,20 @@ const addToDisplay = (num) => {
             let oldValue = displayValue.textContent;
             displayValue.textContent = `${oldValue}${num}`;
         }
+        if (num === "\327") {
+            equationTracker += "*";
+        } else if (num === "\367") {
+            equationTracker += "/";
+        } else {
+            equationTracker += num;
+        }
     }
 }
 
-// Clear function
 const clearDisplay = () => {
     displayValue.textContent = 0;
+    previousEquation.textContent = "";
+    equationTracker = "";
 }
 
 // Change number from positive to negative or vice versa
@@ -52,30 +63,25 @@ const convertToPercent = () => {
     displayValue.textContent = percent;
 }
 
-// Equals function  // Equation is a string
 const mathEquals = () => {
-    let equation = displayValue.textContent;
-    
-    for (let i = 0; i < equation.length; i++) {
-        let num1 = Number(equation.slice(0, i))
-        let num2 = Number(equation.slice(i + 1));
-        switch (equation[i]) {
-            case "\53":
-                displayValue.textContent = num1 + num2;
-                break;
-            case "\55":
-                displayValue.textContent = num1 - num2;
-                break;
-            case "\327":
-                displayValue.textContent = num1 * num2;
-                break;
-            case "\367":
-                displayValue.textContent = num1 / num2;
-                break;
-            default:
-                break;
-        }
-    }
+    const numberRegex = /(\d+)/g;
+    const numbersArr = equationTracker.match(numberRegex);
+    numbersArr.forEach((strNum, index, array) => {
+        array[index] = Number(strNum);
+    });
+
+    const operatorRegex = /[^0-9\.]/g;
+    const operatorsArr = equationTracker.match(operatorRegex);
+    // Need to iterate through one of the arrays and add the operators in the middle of the numbers in the approriate order
+    // for (let i = 0; i < numbersArr.length; i += 2) {
+    //     for (let j = 0; j < operatorsArr.length; j++) {
+    //         numbersArr.splice(i + 1, 0, operatorsArr[j]);
+    //     }
+    // }
+
+    // console.log(`Equals equationTracker: ${equationTracker}`);
+    previousEquation.textContent = `${displayValue.textContent}=`;
+    displayValue.textContent = Number(equationTracker);
 }
 
 // Click events for numbers

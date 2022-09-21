@@ -21,7 +21,7 @@ const seven = document.getElementById("seven");
 const eight = document.getElementById("eight");
 const nine = document.getElementById("nine");
 
-let equationTracker = "";
+let equationTracker = [];
 
 // Add clicked button value to display and to equationTracker variable
 const addToDisplay = (num) => {
@@ -33,11 +33,11 @@ const addToDisplay = (num) => {
             displayValue.textContent = `${oldValue}${num}`;
         }
         if (num === "\327") {
-            equationTracker += "*";
+            equationTracker.push("*");
         } else if (num === "\367") {
-            equationTracker += "/";
+            equationTracker.push("/");
         } else {
-            equationTracker += num;
+            equationTracker.push(num);
         }
     }
 }
@@ -45,7 +45,7 @@ const addToDisplay = (num) => {
 const clearDisplay = () => {
     displayValue.textContent = 0;
     previousEquation.textContent = "";
-    equationTracker = "";
+    equationTracker = [];
 }
 
 // Change number from positive to negative or vice versa
@@ -63,25 +63,52 @@ const convertToPercent = () => {
     displayValue.textContent = percent;
 }
 
+// Store operators here to call and do the math in mathEquals()
+let operators = {
+    "*": function (a, b) {
+        return a * b;
+    },
+    "/": function (a, b) {
+        return a / b;
+    },
+    "+": function (a, b) {
+        return a + b;
+    },
+    "-": function (a, b) {
+        return a - b;
+    }
+}
+
 const mathEquals = () => {
-    const numberRegex = /(\d+)/g;
-    const numbersArr = equationTracker.match(numberRegex);
-    numbersArr.forEach((strNum, index, array) => {
-        array[index] = Number(strNum);
-    });
+    console.log(equationTracker);
+    while (equationTracker.length > 1) {
+        let multiplicationSign = equationTracker.indexOf("*");
+        let divisionSign = equationTracker.indexOf("/");
+        let additionSign = equationTracker.indexOf("+");
+        let subtractionSign = equationTracker.indexOf("-");
+        if (multiplicationSign != -1) {
+            let multipliedNum = operators["*"](equationTracker[multiplicationSign - 1], equationTracker[multiplicationSign + 1]);
+            equationTracker.splice(multiplicationSign - 1, 3, multipliedNum);
+            console.log(equationTracker);
+            continue;
+        } else if (divisionSign != -1) {
+            let dividedNum = operators["/"](equationTracker[divisionSign - 1], equationTracker[divisionSign + 1]);
+            equationTracker.splice(divisionSign - 1, 3, dividedNum);
+            console.log(equationTracker);
+            continue;
+        } else if (additionSign != -1) {
+            let addedNum = operators["+"](equationTracker[additionSign - 1], equationTracker[additionSign + 1]);
+            equationTracker.splice(additionSign - 1, 3, addedNum);
+            console.log(equationTracker);
+        } else if (subtractionSign != -1) {
+            let subtractedNum = operators["-"](equationTracker[subtractionSign - 1], equationTracker[subtractionSign + 1]);
+            equationTracker.splice(subtractionSign - 1, 3, subtractedNum);
+            console.log(equationTracker);
+        }
+    }
 
-    const operatorRegex = /[^0-9\.]/g;
-    const operatorsArr = equationTracker.match(operatorRegex);
-    // Need to iterate through one of the arrays and add the operators in the middle of the numbers in the approriate order
-    // for (let i = 0; i < numbersArr.length; i += 2) {
-    //     for (let j = 0; j < operatorsArr.length; j++) {
-    //         numbersArr.splice(i + 1, 0, operatorsArr[j]);
-    //     }
-    // }
-
-    // console.log(`Equals equationTracker: ${equationTracker}`);
     previousEquation.textContent = `${displayValue.textContent}=`;
-    displayValue.textContent = Number(equationTracker);
+    displayValue.textContent = +equationTracker;
 }
 
 // Click events for numbers

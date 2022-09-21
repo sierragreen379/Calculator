@@ -63,7 +63,7 @@ const convertToPercent = () => {
     displayValue.textContent = percent;
 }
 
-// Store operators here to call and do the math in mathEquals()
+// Store operators here to call to do the math in mathEquals()
 let operators = {
     "*": function (a, b) {
         return a * b;
@@ -81,31 +81,44 @@ let operators = {
 
 const mathEquals = () => {
     console.log(equationTracker);
-    while (equationTracker.length > 1) {
-        let multiplicationSign = equationTracker.indexOf("*");
-        let divisionSign = equationTracker.indexOf("/");
-        let additionSign = equationTracker.indexOf("+");
-        let subtractionSign = equationTracker.indexOf("-");
-        if (multiplicationSign != -1) {
-            let multipliedNum = operators["*"](equationTracker[multiplicationSign - 1], equationTracker[multiplicationSign + 1]);
-            equationTracker.splice(multiplicationSign - 1, 3, multipliedNum);
+
+    // Need to join multi-digit numbers and decimals together before computing
+    let spliceStartIndex = 0;
+    let numOfItemsToRemove = 1;
+    let shallowCopy = [];
+    equationTracker.forEach((element, index) => {
+        if (operators[element]) {
+            shallowCopy.push(equationTracker.splice(spliceStartIndex, numOfItemsToRemove));
             console.log(equationTracker);
-            continue;
-        } else if (divisionSign != -1) {
-            let dividedNum = operators["/"](equationTracker[divisionSign - 1], equationTracker[divisionSign + 1]);
-            equationTracker.splice(divisionSign - 1, 3, dividedNum);
-            console.log(equationTracker);
-            continue;
-        } else if (additionSign != -1) {
-            let addedNum = operators["+"](equationTracker[additionSign - 1], equationTracker[additionSign + 1]);
-            equationTracker.splice(additionSign - 1, 3, addedNum);
-            console.log(equationTracker);
-        } else if (subtractionSign != -1) {
-            let subtractedNum = operators["-"](equationTracker[subtractionSign - 1], equationTracker[subtractionSign + 1]);
-            equationTracker.splice(subtractionSign - 1, 3, subtractedNum);
-            console.log(equationTracker);
+            console.log(shallowCopy);
         }
-    }
+    });
+
+    // while (equationTracker.length > 1) {
+    //     let multiplicationSign = equationTracker.indexOf("*");
+    //     let divisionSign = equationTracker.indexOf("/");
+    //     let additionSign = equationTracker.indexOf("+");
+    //     let subtractionSign = equationTracker.indexOf("-");
+    //     if (multiplicationSign != -1) {
+    //         let multipliedNum = operators["*"](equationTracker[multiplicationSign - 1], equationTracker[multiplicationSign + 1]);
+    //         equationTracker.splice(multiplicationSign - 1, 3, multipliedNum);
+    //         console.log(equationTracker);
+    //         continue;
+    //     } else if (divisionSign != -1) {
+    //         let dividedNum = operators["/"](equationTracker[divisionSign - 1], equationTracker[divisionSign + 1]);
+    //         equationTracker.splice(divisionSign - 1, 3, dividedNum);
+    //         console.log(equationTracker);
+    //         continue;
+    //     } else if (additionSign != -1) {
+    //         let addedNum = operators["+"](equationTracker[additionSign - 1], equationTracker[additionSign + 1]);
+    //         equationTracker.splice(additionSign - 1, 3, addedNum);
+    //         console.log(equationTracker);
+    //     } else if (subtractionSign != -1) {
+    //         let subtractedNum = operators["-"](equationTracker[subtractionSign - 1], equationTracker[subtractionSign + 1]);
+    //         equationTracker.splice(subtractionSign - 1, 3, subtractedNum);
+    //         console.log(equationTracker);
+    //     }
+    // }
 
     previousEquation.textContent = `${displayValue.textContent}=`;
     displayValue.textContent = +equationTracker;

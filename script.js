@@ -63,7 +63,7 @@ const convertToPercent = () => {
     displayValue.textContent = percent;
 }
 
-// Store operators here to call to do the math in mathEquals()
+// Store operators here to call
 let operators = {
     "*": function (a, b) {
         return a * b;
@@ -79,20 +79,32 @@ let operators = {
     }
 }
 
-const mathEquals = () => {
-    console.log(equationTracker);
-
-    // Need to join multi-digit numbers and decimals together before computing
+const joinNums = () => {
     let spliceStartIndex = 0;
-    let numOfItemsToRemove = 1;
-    let shallowCopy = [];
-    equationTracker.forEach((element, index) => {
-        if (operators[element]) {
-            shallowCopy.push(equationTracker.splice(spliceStartIndex, numOfItemsToRemove));
+    let numOfItemsToRemove = 0;
+    equationTracker.forEach((element, index) => { //This is skipping some elements because you are messing with the original array that we're iterating over
+        let numsToJoin = [];
+        console.log(`This element is ${equationTracker[index]} Next element is ${equationTracker[index + 1]}`);
+        if (operators[element] || !equationTracker[index + 1]) {
+            console.log("If is running!");
+            numsToJoin.push(equationTracker.splice(spliceStartIndex, numOfItemsToRemove));
+            let joinedNum = numsToJoin.join(""); // .join isn't using the custom separator, only the default one (","). Why?
+            equationTracker.splice(spliceStartIndex, 0, joinedNum);
+            console.log(numsToJoin);
+            console.log(numsToJoin.join("")); // still not using custom separator
             console.log(equationTracker);
-            console.log(shallowCopy);
+
+            numOfItemsToRemove = 0;
+            spliceStartIndex += 2;
+        } else {
+            console.log("Else is running!");
+            numOfItemsToRemove++;
         }
     });
+}
+
+const mathEquals = () => {
+    joinNums();
 
     // while (equationTracker.length > 1) {
     //     let multiplicationSign = equationTracker.indexOf("*");
@@ -123,6 +135,17 @@ const mathEquals = () => {
     previousEquation.textContent = `${displayValue.textContent}=`;
     displayValue.textContent = +equationTracker;
 }
+
+// Need to code keycodes for all buttons
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// All these empty lines so hopefully I don't miss this block when scrolling through
 
 // Click events for numbers
 zero.addEventListener("click", addToDisplay(0));

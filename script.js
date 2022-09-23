@@ -26,8 +26,10 @@ let equationTracker = [];
 // Add clicked button value to display and to equationTracker variable
 const addToDisplay = (num) => {
     return function () {
-        if (displayValue.textContent == 0 && num !== ".") {
+        if (displayValue.textContent == "0" && num !== ".") {
             displayValue.textContent = num;
+        } else if (displayValue.textContent == -0) {
+            displayValue.textContent = `-${num}`;
         } else {
             let oldValue = displayValue.textContent;
             displayValue.textContent = `${oldValue}${num}`;
@@ -42,6 +44,17 @@ const addToDisplay = (num) => {
     }
 }
 
+// Need to add commas in appropriate places in big enough numbers
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// 
+// All these empty lines so hopefully I don't miss this block when scrolling through
+
 const clearDisplay = () => {
     displayValue.textContent = 0;
     previousEquation.textContent = "";
@@ -49,7 +62,7 @@ const clearDisplay = () => {
 }
 
 // Change number from positive to negative or vice versa
-const posToNegOrNegToPos = () => {
+const posToNegOrNegToPos = () => { // Only changes first number to positive or negative. Need to fix so it changes the last number typed to postive or negative
     if (displayValue.textContent.includes("-")) {
         const newStr = displayValue.textContent.slice(1);
         displayValue.textContent = newStr;
@@ -58,7 +71,8 @@ const posToNegOrNegToPos = () => {
     }
 }
 
-const convertToPercent = () => {
+const convertToPercent = () => { // Cannot convert an equation. Need to fix so it converts the last number typed to a percent
+    // Use throw, catch?
     const percent = displayValue.textContent / 100;
     displayValue.textContent = percent;
 }
@@ -66,71 +80,65 @@ const convertToPercent = () => {
 // Store operators here to call
 let operators = {
     "*": function (a, b) {
-        return a * b;
+        return +a * +b;
     },
     "/": function (a, b) {
-        return a / b;
+        return +a / +b;
     },
     "+": function (a, b) {
-        return a + b;
+        return +a + +b;
     },
     "-": function (a, b) {
-        return a - b;
+        return +a - +b;
     }
 }
 
 const joinNums = () => {
+    let equationTrackerCopy = equationTracker.slice();
     let spliceStartIndex = 0;
     let numOfItemsToRemove = 0;
-    equationTracker.forEach((element, index) => { //This is skipping some elements because you are messing with the original array that we're iterating over
+    equationTracker.forEach((element, index) => {
         let numsToJoin = [];
-        console.log(`This element is ${equationTracker[index]} Next element is ${equationTracker[index + 1]}`);
         if (operators[element] || !equationTracker[index + 1]) {
-            console.log("If is running!");
-            numsToJoin.push(equationTracker.splice(spliceStartIndex, numOfItemsToRemove));
-            let joinedNum = numsToJoin.join(""); // .join isn't using the custom separator, only the default one (","). Why?
-            equationTracker.splice(spliceStartIndex, 0, joinedNum);
-            console.log(numsToJoin);
-            console.log(numsToJoin.join("")); // still not using custom separator
-            console.log(equationTracker);
-
+            if (!equationTracker[index + 1]) {
+                numOfItemsToRemove++;
+            }
+            numsToJoin.push(equationTrackerCopy.splice(spliceStartIndex, numOfItemsToRemove));
+            let joinedNum = numsToJoin.flat().join("");
+            equationTrackerCopy.splice(spliceStartIndex, 0, joinedNum);
             numOfItemsToRemove = 0;
             spliceStartIndex += 2;
         } else {
-            console.log("Else is running!");
             numOfItemsToRemove++;
         }
     });
+    equationTracker = equationTrackerCopy;
 }
 
 const mathEquals = () => {
     joinNums();
 
-    // while (equationTracker.length > 1) {
-    //     let multiplicationSign = equationTracker.indexOf("*");
-    //     let divisionSign = equationTracker.indexOf("/");
-    //     let additionSign = equationTracker.indexOf("+");
-    //     let subtractionSign = equationTracker.indexOf("-");
-    //     if (multiplicationSign != -1) {
-    //         let multipliedNum = operators["*"](equationTracker[multiplicationSign - 1], equationTracker[multiplicationSign + 1]);
-    //         equationTracker.splice(multiplicationSign - 1, 3, multipliedNum);
-    //         console.log(equationTracker);
-    //         continue;
-    //     } else if (divisionSign != -1) {
-    //         let dividedNum = operators["/"](equationTracker[divisionSign - 1], equationTracker[divisionSign + 1]);
-    //         equationTracker.splice(divisionSign - 1, 3, dividedNum);
-    //         console.log(equationTracker);
-    //         continue;
-    //     } else if (additionSign != -1) {
-    //         let addedNum = operators["+"](equationTracker[additionSign - 1], equationTracker[additionSign + 1]);
-    //         equationTracker.splice(additionSign - 1, 3, addedNum);
-    //         console.log(equationTracker);
-    //     } else if (subtractionSign != -1) {
-    //         let subtractedNum = operators["-"](equationTracker[subtractionSign - 1], equationTracker[subtractionSign + 1]);
-    //         equationTracker.splice(subtractionSign - 1, 3, subtractedNum);
-    //         console.log(equationTracker);
-    //     }
-    // }
+    while (equationTracker.length > 1) {
+        let multiplicationSign = equationTracker.indexOf("*");
+        let divisionSign = equationTracker.indexOf("/");
+        let additionSign = equationTracker.indexOf("+");
+        let subtractionSign = equationTracker.indexOf("-");
+        if (multiplicationSign != -1) {
+            let multipliedNum = operators["*"](equationTracker[multiplicationSign - 1], equationTracker[multiplicationSign + 1]);
+            equationTracker.splice(multiplicationSign - 1, 3, multipliedNum);
+            continue;
+        } else if (divisionSign != -1) {
+            let dividedNum = operators["/"](equationTracker[divisionSign - 1], equationTracker[divisionSign + 1]);
+            equationTracker.splice(divisionSign - 1, 3, dividedNum);
+            continue;
+        } else if (additionSign != -1) {
+            let addedNum = operators["+"](equationTracker[additionSign - 1], equationTracker[additionSign + 1]);
+            equationTracker.splice(additionSign - 1, 3, addedNum);
+        } else if (subtractionSign != -1) {
+            let subtractedNum = operators["-"](equationTracker[subtractionSign - 1], equationTracker[subtractionSign + 1]);
+            equationTracker.splice(subtractionSign - 1, 3, subtractedNum);
+        }
+    }
 
     previousEquation.textContent = `${displayValue.textContent}=`;
     displayValue.textContent = +equationTracker;

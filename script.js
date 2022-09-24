@@ -24,8 +24,9 @@ const nine = document.getElementById("nine");
 let equationTracker = [];
 
 // Add clicked button value to display and to equationTracker variable
-const addToDisplay = (num) => {
+const addToDisplay = (num, str) => {
     return function () {
+        console.log(`addToDisplay is running from ${str}`);
         if (displayValue.textContent == "0" && num !== ".") {
             displayValue.textContent = num;
         } else if (displayValue.textContent == -0) {
@@ -144,36 +145,93 @@ const mathEquals = () => {
     displayValue.textContent = +equationTracker;
 }
 
-// Need to code keycodes for all buttons
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// All these empty lines so hopefully I don't miss this block when scrolling through
+const pressedButton = (pressed) => {
+    switch(pressed.key) {
+        case "0":
+            addToDisplay(0, "pressedButton");
+            break;
+        case "1":
+            addToDisplay(1, "pressedButton");
+            break;
+        case "2":
+            addToDisplay(2, "pressedButton");
+            break;
+        case "3":
+            addToDisplay(3, "pressedButton");
+            break;
+        case "4":
+            addToDisplay(4, "pressedButton");
+            break;
+        case "5":
+            addToDisplay(5, "pressedButton");
+            break;
+        case "6":
+            addToDisplay(6, "pressedButton");
+            break;
+        case "7":
+            addToDisplay(7, "pressedButton");
+            break;
+        case "8":
+            addToDisplay(8, "pressedButton");
+            break;
+        case "9":
+            addToDisplay(9, "pressedButton");
+            break;
+        case "c":
+            clearDisplay();
+            break;
+        case "–": // Option-Minus
+            posToNegOrNegToPos();
+            break;
+        case "%":
+            convertToPercent();
+            break;
+        case ".":
+            addToDisplay(".", "pressedButton");
+            break;
+        case "+":
+            addToDisplay("\53", "pressedButton");
+            break;
+        case "-":
+            addToDisplay("\55", "pressedButton");
+            break;
+        case "*":
+            addToDisplay("\327", "pressedButton");
+            break;
+        case "/":
+            addToDisplay("\367", "pressedButton");
+            break;
+        case "=":
+        case "Enter":
+            mathEquals();
+            break;
+        default:
+            console.log("I'm not working.");
+            break;
+    }
+}
 
 // Click events for numbers
-zero.addEventListener("click", addToDisplay(0));
-one.addEventListener("click", addToDisplay(1));
-two.addEventListener("click", addToDisplay(2));
-three.addEventListener("click", addToDisplay(3));
-four.addEventListener("click", addToDisplay(4));
-five.addEventListener("click", addToDisplay(5));
-six.addEventListener("click", addToDisplay(6));
-seven.addEventListener("click", addToDisplay(7));
-eight.addEventListener("click", addToDisplay(8));
-nine.addEventListener("click", addToDisplay(9));
+zero.addEventListener("click", addToDisplay(0, "clicking"));
+one.addEventListener("click", addToDisplay(1, "clicking"));
+two.addEventListener("click", addToDisplay(2, "clicking"));
+three.addEventListener("click", addToDisplay(3, "clicking"));
+four.addEventListener("click", addToDisplay(4, "clicking"));
+five.addEventListener("click", addToDisplay(5, "clicking"));
+six.addEventListener("click", addToDisplay(6, "clicking"));
+seven.addEventListener("click", addToDisplay(7, "clicking"));
+eight.addEventListener("click", addToDisplay(8, "clicking"));
+nine.addEventListener("click", addToDisplay(9, "clicking"));
 
 // Click events for other buttons
 clear.addEventListener("click", clearDisplay);
 pos_neg.addEventListener("click", posToNegOrNegToPos);
 percent.addEventListener("click", convertToPercent);
-decimal.addEventListener("click", addToDisplay("."));
-plus.addEventListener("click", addToDisplay("\53"));
-minus.addEventListener("click", addToDisplay("\55"));
-multiply.addEventListener("click", addToDisplay("\327"));
-divide.addEventListener("click", addToDisplay("\367"));
+decimal.addEventListener("click", addToDisplay(".", "clicking"));
+plus.addEventListener("click", addToDisplay("\53", "clicking"));
+minus.addEventListener("click", addToDisplay("\55", "clicking"));
+multiply.addEventListener("click", addToDisplay("\327", "clicking"));
+divide.addEventListener("click", addToDisplay("\367", "clicking"));
 equals.addEventListener("click", mathEquals);
+
+document.addEventListener("keypress", pressedButton);

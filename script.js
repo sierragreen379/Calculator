@@ -25,23 +25,29 @@ let equationTracker = [];
 
 // Add clicked button value to display and to equationTracker variable
 const addToDisplay = (num, str) => {
+    if(str === "pressedButton") displayFunc(num);
+    console.log(`number: ${num} is running from ${str}`);
     return function () {
+        displayFunc(num);
         console.log(`addToDisplay is running from ${str}`);
-        if (displayValue.textContent == "0" && num !== ".") {
-            displayValue.textContent = num;
-        } else if (displayValue.textContent == -0) {
-            displayValue.textContent = `-${num}`;
-        } else {
-            let oldValue = displayValue.textContent;
-            displayValue.textContent = `${oldValue}${num}`;
-        }
-        if (num === "\327") {
-            equationTracker.push("*");
-        } else if (num === "\367") {
-            equationTracker.push("/");
-        } else {
-            equationTracker.push(num);
-        }
+    }
+}
+
+function displayFunc(num) {
+    if (displayValue.textContent == "0" && num !== ".") {
+        displayValue.textContent = num;
+    } else if (displayValue.textContent == -0) {
+        displayValue.textContent = `-${num}`;
+    } else {
+        let oldValue = displayValue.textContent;
+        displayValue.textContent = `${oldValue}${num}`;
+    }
+    if (num === "\327") {
+        equationTracker.push("*");
+    } else if (num === "\367") {
+        equationTracker.push("/");
+    } else {
+        equationTracker.push(num);
     }
 }
 
@@ -146,6 +152,7 @@ const mathEquals = () => {
 }
 
 const pressedButton = (pressed) => {
+    console.log("key was pressed" + pressed.key);
     switch(pressed.key) {
         case "0":
             addToDisplay(0, "pressedButton");

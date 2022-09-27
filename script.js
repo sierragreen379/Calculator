@@ -68,10 +68,22 @@ const posToNegOrNegToPos = () => { // Only changes first number to positive or n
     }
 }
 
+// Working on this function. The regex needs updating apparently. Why does it work if I only search for one operator, but not when I seach for multiple operators at the same time?
+// Converts last number typed to a percent
 const convertToPercent = () => { // Cannot convert an equation. Need to fix so it converts the last number typed to a percent
-    // Use throw, catch?
-    const percent = displayValue.textContent / 100;
-    displayValue.textContent = percent;
+    try {
+        const percent = displayValue.textContent / 100;
+        if (!percent) {
+            throw "Working on it...";
+        }
+        displayValue.textContent = percent;
+        equationTracker.unshift(".");
+    } catch {
+        let match = displayValue.textContent.match(/\+\-\327\367/g);
+        console.log(match);
+        let lastIndex = displayValue.textContent.lastIndexOf(match[match.length - 1]);
+        console.log(lastIndex);
+    }
 }
 
 // Store operators here to call
@@ -135,7 +147,6 @@ const mathEquals = () => {
             equationTracker.splice(subtractionSign - 1, 3, subtractedNum);
         }
     }
-
     previousEquation.textContent = `${displayValue.textContent}=`;
     displayValue.textContent = +equationTracker;
     addCommas();
@@ -202,7 +213,7 @@ const pressedButton = (pressed) => {
             mathEquals();
             break;
         default:
-            console.log("I'm not working.");
+            console.log("Key not recognized");
             break;
     }
 }

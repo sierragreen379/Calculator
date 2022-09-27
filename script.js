@@ -24,37 +24,33 @@ const nine = document.getElementById("nine");
 let equationTracker = [];
 
 // Add clicked button value to display and to equationTracker variable
-const addToDisplay = (num, str) => {
-    return function () {
-        console.log(`addToDisplay is running from ${str}`);
-        if (displayValue.textContent == "0" && num !== ".") {
-            displayValue.textContent = num;
-        } else if (displayValue.textContent == -0) {
-            displayValue.textContent = `-${num}`;
-        } else {
-            let oldValue = displayValue.textContent;
-            displayValue.textContent = `${oldValue}${num}`;
-        }
-        if (num === "\327") {
-            equationTracker.push("*");
-        } else if (num === "\367") {
-            equationTracker.push("/");
-        } else {
-            equationTracker.push(num);
-        }
+const addToDisplay = (num) => {
+    if (displayValue.textContent == "0" && num !== ".") {
+        displayValue.textContent = num;
+    } else if (displayValue.textContent == -0) {
+        displayValue.textContent = `-${num}`;
+    } else {
+        let oldValue = displayValue.textContent;
+        displayValue.textContent = `${oldValue}${num}`;
+    }
+    if (num === "\327") {
+        equationTracker.push("*");
+    } else if (num === "\367") {
+        equationTracker.push("/");
+    } else {
+        equationTracker.push(num);
+    }
+    if (displayValue.textContent.length > 3) {
+        addCommas();
     }
 }
 
-// Need to add commas in appropriate places in big enough numbers
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// All these empty lines so hopefully I don't miss this block when scrolling through
+// Add commas to the display number(s) at the appropriate places
+const addCommas = () => {
+    let oldDisplayValue = displayValue.textContent.replaceAll(",", "");
+    let newDisplayValue = oldDisplayValue.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+    displayValue.textContent = newDisplayValue;
+}
 
 const clearDisplay = () => {
     displayValue.textContent = 0;
@@ -118,7 +114,6 @@ const joinNums = () => {
 
 const mathEquals = () => {
     joinNums();
-
     while (equationTracker.length > 1) {
         let multiplicationSign = equationTracker.indexOf("*");
         let divisionSign = equationTracker.indexOf("/");
@@ -143,39 +138,40 @@ const mathEquals = () => {
 
     previousEquation.textContent = `${displayValue.textContent}=`;
     displayValue.textContent = +equationTracker;
+    addCommas();
 }
 
 const pressedButton = (pressed) => {
     switch(pressed.key) {
         case "0":
-            addToDisplay(0, "pressedButton");
+            addToDisplay(0);
             break;
         case "1":
-            addToDisplay(1, "pressedButton");
+            addToDisplay(1);
             break;
         case "2":
-            addToDisplay(2, "pressedButton");
+            addToDisplay(2);
             break;
         case "3":
-            addToDisplay(3, "pressedButton");
+            addToDisplay(3);
             break;
         case "4":
-            addToDisplay(4, "pressedButton");
+            addToDisplay(4);
             break;
         case "5":
-            addToDisplay(5, "pressedButton");
+            addToDisplay(5);
             break;
         case "6":
-            addToDisplay(6, "pressedButton");
+            addToDisplay(6);
             break;
         case "7":
-            addToDisplay(7, "pressedButton");
+            addToDisplay(7);
             break;
         case "8":
-            addToDisplay(8, "pressedButton");
+            addToDisplay(8);
             break;
         case "9":
-            addToDisplay(9, "pressedButton");
+            addToDisplay(9);
             break;
         case "c":
             clearDisplay();
@@ -187,19 +183,19 @@ const pressedButton = (pressed) => {
             convertToPercent();
             break;
         case ".":
-            addToDisplay(".", "pressedButton");
+            addToDisplay(".");
             break;
         case "+":
-            addToDisplay("\53", "pressedButton");
+            addToDisplay("\53");
             break;
         case "-":
-            addToDisplay("\55", "pressedButton");
+            addToDisplay("\55");
             break;
         case "*":
-            addToDisplay("\327", "pressedButton");
+            addToDisplay("\327");
             break;
         case "/":
-            addToDisplay("\367", "pressedButton");
+            addToDisplay("\367");
             break;
         case "=":
         case "Enter":
@@ -212,26 +208,26 @@ const pressedButton = (pressed) => {
 }
 
 // Click events for numbers
-zero.addEventListener("click", addToDisplay(0, "clicking"));
-one.addEventListener("click", addToDisplay(1, "clicking"));
-two.addEventListener("click", addToDisplay(2, "clicking"));
-three.addEventListener("click", addToDisplay(3, "clicking"));
-four.addEventListener("click", addToDisplay(4, "clicking"));
-five.addEventListener("click", addToDisplay(5, "clicking"));
-six.addEventListener("click", addToDisplay(6, "clicking"));
-seven.addEventListener("click", addToDisplay(7, "clicking"));
-eight.addEventListener("click", addToDisplay(8, "clicking"));
-nine.addEventListener("click", addToDisplay(9, "clicking"));
+zero.addEventListener("click", function () {addToDisplay(0)});
+one.addEventListener("click", function () {addToDisplay(1)});
+two.addEventListener("click", function () {addToDisplay(2)});
+three.addEventListener("click", function () {addToDisplay(3)});
+four.addEventListener("click", function () {addToDisplay(4)});
+five.addEventListener("click", function () {addToDisplay(5)});
+six.addEventListener("click", function () {addToDisplay(6)});
+seven.addEventListener("click", function () {addToDisplay(7)});
+eight.addEventListener("click", function () {addToDisplay(8)});
+nine.addEventListener("click", function () {addToDisplay(9)});
 
 // Click events for other buttons
 clear.addEventListener("click", clearDisplay);
 pos_neg.addEventListener("click", posToNegOrNegToPos);
 percent.addEventListener("click", convertToPercent);
-decimal.addEventListener("click", addToDisplay(".", "clicking"));
-plus.addEventListener("click", addToDisplay("\53", "clicking"));
-minus.addEventListener("click", addToDisplay("\55", "clicking"));
-multiply.addEventListener("click", addToDisplay("\327", "clicking"));
-divide.addEventListener("click", addToDisplay("\367", "clicking"));
+decimal.addEventListener("click", function () {addToDisplay(".")});
+plus.addEventListener("click", function () {addToDisplay("\53")});
+minus.addEventListener("click", function () {addToDisplay("\55")});
+multiply.addEventListener("click", function () {addToDisplay("\327")});
+divide.addEventListener("click", function () {addToDisplay("\367")});
 equals.addEventListener("click", mathEquals);
 
 document.addEventListener("keypress", pressedButton);

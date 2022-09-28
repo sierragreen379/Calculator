@@ -22,6 +22,7 @@ const eight = document.getElementById("eight");
 const nine = document.getElementById("nine");
 
 let equationTracker = [];
+let indexCurrentNumStartsAt = 0;
 
 // Add clicked button value to display and to equationTracker variable
 const addToDisplay = (num) => {
@@ -43,6 +44,9 @@ const addToDisplay = (num) => {
     if (displayValue.textContent.length > 3) {
         addCommas();
     }
+    if (/[^\.\d]/.test(num)) {
+        indexCurrentNumStartsAt = displayValue.textContent.lastIndexOf(num) + 1;
+    }
 }
 
 // Add commas to the display number(s) at the appropriate places
@@ -56,34 +60,45 @@ const clearDisplay = () => {
     displayValue.textContent = 0;
     previousEquation.textContent = "";
     equationTracker = [];
+    indexCurrentNumStartsAt = 0;
 }
 
-// Change number from positive to negative or vice versa
-const posToNegOrNegToPos = () => { // Only changes first number to positive or negative. Need to fix so it changes the last number typed to postive or negative
-    if (displayValue.textContent.includes("-")) {
-        const newStr = displayValue.textContent.slice(1);
-        displayValue.textContent = newStr;
+// Change last number typed from positive to negative or vice versa
+const posToNegOrNegToPos = () => {
+    let firstPartOfDisplay = displayValue.textContent.slice(0, indexCurrentNumStartsAt);
+    let secondPartOfDisplay = displayValue.textContent.slice(indexCurrentNumStartsAt);
+    if (displayValue.textContent[indexCurrentNumStartsAt] != "-") {
+        displayValue.textContent = `${firstPartOfDisplay}-${secondPartOfDisplay}`;
     } else {
-        displayValue.textContent = `-${displayValue.textContent}`;
+        secondPartOfDisplay = displayValue.textContent.slice(indexCurrentNumStartsAt + 1);
+        displayValue.textContent = `${firstPartOfDisplay}${secondPartOfDisplay}`;
     }
 }
 
-// Working on this function. The regex needs updating apparently. Why does it work if I only search for one operator, but not when I seach for multiple operators at the same time?
-// Converts last number typed to a percent
-const convertToPercent = () => { // Cannot convert an equation. Need to fix so it converts the last number typed to a percent
+// Converts last number typed to a percent of 100
+const convertToPercent = () => { // Need to make equationTracker update correctly with the new percent value. Issues arise when the calculated percent is <1
     try {
-        const percent = displayValue.textContent / 100;
+        const displayWithoutCommas = displayValue.textContent.replaceAll(",", "");
+        const percent = displayWithoutCommas / 100;
         if (!percent) {
             throw "Working on it...";
         }
         displayValue.textContent = percent;
-        equationTracker.unshift(".");
     } catch {
-        let match = displayValue.textContent.match(/\+\-\327\367/g);
-        console.log(match);
-        let lastIndex = displayValue.textContent.lastIndexOf(match[match.length - 1]);
-        console.log(lastIndex);
+        let firstPartOfDisplay = displayValue.textContent.slice(0, indexCurrentNumStartsAt);
+        let secondPartOfDisplay = displayValue.textContent.slice(indexCurrentNumStartsAt);
+        let convertedNum = secondPartOfDisplay.replaceAll(",", "") / 100;
+        displayValue.textContent = `${firstPartOfDisplay}${convertedNum}`;
     }
+    console.log(displayValue.textContent);
+    let indexOfDecimalPoint = displayValue.textContent.lastIndexOf(".");
+    console.log(indexOfDecimalPoint);
+    if (displayValue.textContent[0] == 0 || indexCurrentNumStartsAt == 0) {
+        indexOfDecimalPoint -= 1;
+    }
+    equationTracker.splice(indexOfDecimalPoint, 0, ".");
+    addCommas();
+    console.log(equationTracker);
 }
 
 // Store operators here to call

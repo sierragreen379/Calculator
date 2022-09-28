@@ -24,7 +24,7 @@ button {
     height: 80px;
     width: 80px;
     border: none;
-    /* z-index: 99; */
+    z-index: 99;
     cursor: pointer;
 }
 

@@ -2,6 +2,7 @@
 const displayValue = document.getElementById("display_value");
 const previousEquation = document.getElementById("previous_equation");
 const clear = document.getElementById("clear");
+const backspace = document.getElementById("backspace");
 const pos_neg = document.getElementById("pos_neg");
 const percent = document.getElementById("percent");
 const decimal = document.getElementById("decimal");
@@ -26,9 +27,18 @@ let indexCurrentNumStartsAt = 0;
 
 // Add clicked button value to display and to equationTracker variable
 const addToDisplay = (num) => {
-    if (displayValue.textContent == "0" && num !== ".") {
+    if (displayValue.textContent === "0" && num !== ".") {
         displayValue.textContent = num;
-    } else if (displayValue.textContent == -0) {
+    // } else if (num === ".") {
+    //     if (displayValue.textContent === "0") {
+    //         displayValue.textContent += num;
+    //     } else if (displayValue.textContent === "-0") {
+    //         displayValue.textContent = "-0.";
+    //     } else {
+    //         let oldValue = displayValue.textContent;
+    //         displayValue.textContent = `${oldValue}0.`
+    //     }
+    } else if (displayValue.textContent === "-0") {
         displayValue.textContent = `-${num}`;
     } else {
         let oldValue = displayValue.textContent;
@@ -40,6 +50,7 @@ const addToDisplay = (num) => {
         equationTracker.push("/");
     } else {
         equationTracker.push(num);
+        console.log(num);
     }
     if (displayValue.textContent.length > 3) {
         addCommas();
@@ -61,6 +72,14 @@ const clearDisplay = () => {
     previousEquation.textContent = "";
     equationTracker = [];
     indexCurrentNumStartsAt = 0;
+}
+
+const removeLastItem = () => {
+    equationTracker.pop();
+    if (displayValue.textContent !== "0") {
+        let newDisplayValue = displayValue.textContent.substring(0, (displayValue.textContent.length - 1));
+        displayValue.textContent = newDisplayValue;
+    }
 }
 
 // Change last number typed from positive to negative or vice versa
@@ -139,7 +158,7 @@ const joinNums = () => {
     equationTracker = equationTrackerCopy;
 }
 
-const mathEquals = () => {
+const mathEquals = () => { // indexCurrentNumStartsAt needs adjusted once equals is hit
     joinNums();
     while (equationTracker.length > 1) {
         let multiplicationSign = equationTracker.indexOf("*");
@@ -250,6 +269,7 @@ nine.addEventListener("click", function () {addToDisplay(9)});
 
 // Click events for other buttons
 clear.addEventListener("click", clearDisplay);
+backspace.addEventListener("click", removeLastItem); // Add backspace to switch statement
 pos_neg.addEventListener("click", posToNegOrNegToPos);
 percent.addEventListener("click", convertToPercent);
 decimal.addEventListener("click", function () {addToDisplay(".")});

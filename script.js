@@ -228,7 +228,10 @@ const pressedButton = (pressed) => {
             mathEquals();
             break;
         default:
-            console.log("Key not recognized");
+            document.getElementById("container").style.filter = "opacity(50%)";
+            setTimeout(() => {
+                document.getElementById("container").style.filter = "none";
+            }, 500);
             break;
     }
 }

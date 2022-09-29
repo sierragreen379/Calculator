@@ -25,35 +25,32 @@ const nine = document.getElementById("nine");
 let equationTracker = [];
 let indexCurrentNumStartsAt = 0;
 
-// Add clicked button value to display and to equationTracker variable
 const addToDisplay = (num) => {
-    if (displayValue.textContent === "0" && num !== ".") {
+    if (num === "." && !displayValue.textContent[indexCurrentNumStartsAt]) {
+        displayValue.textContent += "0.";
+    } else if (displayValue.textContent === "0" && num !== ".") {
         displayValue.textContent = num;
-    // } else if (num === ".") {
-    //     if (displayValue.textContent === "0") {
-    //         displayValue.textContent += num;
-    //     } else if (displayValue.textContent === "-0") {
-    //         displayValue.textContent = "-0.";
-    //     } else {
-    //         let oldValue = displayValue.textContent;
-    //         displayValue.textContent = `${oldValue}0.`
-    //     }
-    } else if (displayValue.textContent === "-0") {
+    } else if (displayValue.textContent === "-0" && num !== ".") {
         displayValue.textContent = `-${num}`;
     } else {
-        let oldValue = displayValue.textContent;
-        displayValue.textContent = `${oldValue}${num}`;
+        displayValue.textContent += num;
     }
+    if (displayValue.textContent.length > 3) {
+        addCommas();
+    }
+    manipulateVariables(num);
+}
+
+// Add to equationTracker and set indexCurrentNumStartsAt
+const manipulateVariables = (num) => {
     if (num === "\327") {
         equationTracker.push("*");
     } else if (num === "\367") {
         equationTracker.push("/");
+    } else if (num === ".") {
+        equationTracker.push("0", ".")
     } else {
         equationTracker.push(num);
-        console.log(num);
-    }
-    if (displayValue.textContent.length > 3) {
-        addCommas();
     }
     if (/[^\.\d]/.test(num)) {
         indexCurrentNumStartsAt = displayValue.textContent.lastIndexOf(num) + 1;
@@ -80,6 +77,14 @@ const removeLastItem = () => {
         let newDisplayValue = displayValue.textContent.substring(0, (displayValue.textContent.length - 1));
         displayValue.textContent = newDisplayValue;
     }
+    if (displayValue.textContent.length < indexCurrentNumStartsAt) {
+        let matchedOperator = displayValue.textContent.match(/[^\.\d\,]/g);
+        if (matchedOperator) {
+            indexCurrentNumStartsAt = displayValue.textContent.lastIndexOf(matchedOperator[matchedOperator.length - 1]) + 1;
+        } else {
+            indexCurrentNumStartsAt = 0;
+        }
+    }
 }
 
 // Change last number typed from positive to negative or vice versa
@@ -95,7 +100,7 @@ const posToNegOrNegToPos = () => {
 }
 
 // Converts last number typed to a percent of 100
-const convertToPercent = () => { // Need to make equationTracker update correctly with the new percent value. Issues arise when the calculated percent is <1
+const convertToPercent = () => { // Need to make equationTracker update correctly with the new percent value. Issues arise when the number to change to a percentage already has a decimal in it. Now there's two decimals in one number in equationTracker! :P
     try {
         const displayWithoutCommas = displayValue.textContent.replaceAll(",", "");
         const percent = displayWithoutCommas / 100;
@@ -109,7 +114,6 @@ const convertToPercent = () => { // Need to make equationTracker update correctl
         let convertedNum = secondPartOfDisplay.replaceAll(",", "") / 100;
         displayValue.textContent = `${firstPartOfDisplay}${convertedNum}`;
     }
-    console.log(displayValue.textContent);
     let indexOfDecimalPoint = displayValue.textContent.lastIndexOf(".");
     console.log(indexOfDecimalPoint);
     if (displayValue.textContent[0] == 0 || indexCurrentNumStartsAt == 0) {
@@ -158,7 +162,7 @@ const joinNums = () => {
     equationTracker = equationTrackerCopy;
 }
 
-const mathEquals = () => { // indexCurrentNumStartsAt needs adjusted once equals is hit
+const mathEquals = () => {
     joinNums();
     while (equationTracker.length > 1) {
         let multiplicationSign = equationTracker.indexOf("*");
@@ -184,6 +188,9 @@ const mathEquals = () => { // indexCurrentNumStartsAt needs adjusted once equals
     previousEquation.textContent = `${displayValue.textContent}=`;
     displayValue.textContent = +equationTracker;
     addCommas();
+    equationTracker = displayValue.textContent.split("");
+    console.log(equationTracker);
+    indexCurrentNumStartsAt = 0;
 }
 
 const pressedButton = (pressed) => {
